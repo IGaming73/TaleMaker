@@ -17,15 +17,17 @@ class MainWindow(QtWidgets.QMainWindow):  # create a class for the main window
         # creating the left and right widgets
         self.leftWidget = QtWidgets.QWidget()  # left widget
         self.leftLayout = QtWidgets.QVBoxLayout()  # vertical layout
+        self.leftLayout.setAlignment(QtCore.Qt.AlignCenter)  # center align the widgets
         self.leftWidget.setLayout(self.leftLayout)  # applying layout
         self.mainLayout.addWidget(self.leftWidget)  # adding to the main layout
 
         self.rightWidget = QtWidgets.QWidget()  # right widget
         self.rightLayout = QtWidgets.QVBoxLayout()
+        self.leftLayout.setAlignment(QtCore.Qt.AlignCenter)
         self.rightWidget.setLayout(self.rightLayout)
         self.mainLayout.addWidget(self.rightWidget)
 
-        # now creating the interactive widgets
+        # now creating the interactive widgets for the left side
         # line text input widget
         self.heroName = QtWidgets.QLineEdit()  # create a QLineEdit widget
         self.heroName.setPlaceholderText("Enter hero name")  # text to show in grey when empty
@@ -36,6 +38,31 @@ class MainWindow(QtWidgets.QMainWindow):  # create a class for the main window
                                 "Comic Sans MS", "Trebuchet MS", "Arial Black", "Impact"])  # add items to the combo box
         self.leftLayout.addWidget(self.fontType)
 
+        # create a stretch to push the widgets to the bottom
+        self.leftLayout.addStretch()
+
+        # create a refresh button
+        self.refreshButton = QtWidgets.QPushButton("Refresh story")
+        self.leftLayout.addWidget(self.refreshButton)
+
+        # create an export button
+        self.exportButton = QtWidgets.QPushButton("Write to file")
+        self.leftLayout.addWidget(self.exportButton)
+
+        # we will now create the widgets for the right side
+        # create a title label with an icon
+        self.titleWidget = QtWidgets.QWidget()
+        self.titleLayout = QtWidgets.QHBoxLayout()
+        self.titleWidget.setLayout(self.titleLayout)
+        self.rightLayout.addWidget(self.titleWidget)
+
+        self.imageLabel = QtWidgets.QLabel()  # create a QLabel widget for the image
+        self.imageLabel.setPixmap(QtGui.QPixmap("image.png").scaled(50, 50, QtCore.Qt.KeepAspectRatio))  # set the image in the label and scale it
+        self.titleLayout.addWidget(self.imageLabel)
+
+        self.titleLabel = QtWidgets.QLabel("My Amazing Tale")  # create a QLabel widget for the title
+        self.titleLabel.setFont(QtGui.QFont("Arial", 20))  # set the font and font size
+        self.titleLayout.addWidget(self.titleLabel)
 
 
 App = QtWidgets.QApplication(sys.argv)  # create an application
