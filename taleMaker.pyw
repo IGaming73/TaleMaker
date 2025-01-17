@@ -6,7 +6,12 @@ import sys  # we will use sys to exit the application
 class MainWindow(QtWidgets.QMainWindow):  # create a class for the main window
 
     def __init__(self):  # create a method to initialize the main window
+        """initialize the main window"""
         super().__init__()  # initialize the basic window
+
+        # gather the content of the story from the file
+        with open("story.txt", "r", encoding="utf-8") as file:  # open the file in read mode
+            self.story = file.read()  # read the content of the file as a string
 
         # organizing the basic window
         self.mainWidget = QtWidgets.QWidget()  # create an empty widget
@@ -32,19 +37,18 @@ class MainWindow(QtWidgets.QMainWindow):  # create a class for the main window
         # line text input widget
         self.heroName = QtWidgets.QLineEdit()  # create a QLineEdit widget
         self.heroName.setPlaceholderText("Enter hero name")  # text to show in grey when empty
+        self.heroName.textChanged.connect(self.updateStory)  # update the story when the name is changed in live
         self.leftLayout.addWidget(self.heroName)
 
         self.fontType = QtWidgets.QComboBox()  # create a QComboBox widget
         self.fontType.addItems(["Arial", "Verdana", "Times New Roman", "Courier New", "Georgia",
                                 "Comic Sans MS", "Trebuchet MS", "Arial Black", "Impact"])  # add items to the combo box
+        self.fontType.setCurrentText("Comic Sans MS")  # set the default selected item
+        self.fontType.currentIndexChanged.connect(self.updateStory)  # update the story when the font is changed
         self.leftLayout.addWidget(self.fontType)
 
         # create a stretch to push the widgets to the bottom
         self.leftLayout.addStretch()
-
-        # create a refresh button
-        self.refreshButton = QtWidgets.QPushButton("Display story")
-        self.leftLayout.addWidget(self.refreshButton)
 
         # create an export button
         self.exportButton = QtWidgets.QPushButton("Write to file")
@@ -69,16 +73,34 @@ class MainWindow(QtWidgets.QMainWindow):  # create a class for the main window
         # create a text browser
         self.storyBrowser = QtWidgets.QTextBrowser()
         self.storyBrowser.setStyleSheet("background: transparent;")  # set specific styling with css, in this case, the background color
+        self.storyBrowser.setMinimumHeight(300)  # set the minimum height of the text browser
         self.rightLayout.addWidget(self.storyBrowser)
 
         # create a web page to display a video
         self.videoWidget = QtWebEngineWidgets.QWebEngineView()  # webpage viewer widget, this uses local HTML
-        sizeX, sizeY = 576, 324  # size of the video
-        videoHtml = f'<iframe width="{sizeX}" height="{sizeY}" src="https://www.youtube-nocookie.com/embed/bOBLKHx7E5U?modestbranding=1&showinfo=0" frameborder="0"></iframe>'  # HTML content to display a video
-        self.videoWidget.setHtml(videoHtml)  # set the HTML content
-        self.videoWidget.setFixedSize(sizeX+16, sizeY+16)  # set the size of the widget (add a bit of padding)
+        self.videoWidget.setFixedSize(576, 324)  # set the size of the widget
+        htmlString = '<style> body{margin:0px} </style> <iframe width="100%" height="100%" src="https://www.youtube-nocookie.com/embed/bOBLKHx7E5U" frameborder="0"></iframe>'  # HTML content to display a video
+        self.videoWidget.setHtml(htmlString)  # set the HTML content
         self.videoWidget.setSizePolicy(QtWidgets.QSizePolicy.Fixed, QtWidgets.QSizePolicy.Fixed)  # prevent the widget from expanding in both directions
         self.rightLayout.addWidget(self.videoWidget)
+
+        self.updateStory()  # update the story once when the window is created
+    
+
+    def updateStory(self):
+        """method to update the story based on the inputs"""
+        # replace the placeholders with the actual values
+        heroName = self.heroName.text()  # get the text from the QLineEdit widget
+        if heroName:  # if the hero name is not empty, change the story
+            newStory = self.story.replace("[name]", heroName)  # replace the placeholder with the actual hero name
+        else:  # if the hero name is empty, keep the original story with the placeholder
+            newStory = self.story
+
+        # select the font
+        fontType = self.fontType.currentText()  # get the selected font type
+        self.storyBrowser.setFont(QtGui.QFont(fontType, 14))  # apply ther font to the text browser
+
+        self.storyBrowser.setText(newStory)  # write the story in the text browser widget
 
 
 App = QtWidgets.QApplication(sys.argv)  # create an application
