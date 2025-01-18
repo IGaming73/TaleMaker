@@ -52,6 +52,7 @@ class MainWindow(QtWidgets.QMainWindow):  # create a class for the main window
 
         # create an export button
         self.exportButton = QtWidgets.QPushButton("Write to file")
+        self.exportButton.clicked.connect(self.exportStory)  # execute the method when the button is clicked
         self.leftLayout.addWidget(self.exportButton)
 
         # we will now create the widgets for the right side
@@ -101,10 +102,19 @@ class MainWindow(QtWidgets.QMainWindow):  # create a class for the main window
         self.storyBrowser.setFont(QtGui.QFont(fontType, 14))  # apply ther font to the text browser
 
         self.storyBrowser.setText(newStory)  # write the story in the text browser widget
+    
+    def exportStory(self):
+        """method to export the story to a text file"""
+        story = self.storyBrowser.toPlainText()  # get the content from the text browser
+        exportPath, fileType = QtWidgets.QFileDialog.getSaveFileName(self, "Export story", filter="TEXT files (*.txt)")  # open a dialog to select the path to save the text file
+        if exportPath:  # if the user chose a path
+            with open(exportPath, "w", encoding="utf-8") as file:  # open the file in write mode
+                file.write(story)  # write the story in the file
 
 
 App = QtWidgets.QApplication(sys.argv)  # create an application
 window = MainWindow()  # create a main window
 window.setWindowTitle("Tale Maker")  # set the title of the window
+window.setWindowIcon(QtGui.QIcon("icon.png"))  # set the window icon
 window.show()  # display the main window
 sys.exit(App.exec_())  # execute the application and exit the program when the window is closed
