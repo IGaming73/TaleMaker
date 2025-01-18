@@ -64,7 +64,9 @@ class MainWindow(QtWidgets.QMainWindow):  # create a class for the main window
         self.rightLayout.addWidget(self.titleWidget)
 
         self.imageLabel = QtWidgets.QLabel()  # create a QLabel widget for the image
-        self.imageLabel.setPixmap(QtGui.QPixmap("image.png").scaled(50, 50, QtCore.Qt.KeepAspectRatio))  # set the image in the label and scale it
+        pixmap = QtGui.QPixmap("image.png")  # load the image
+        pixmap = pixmap.scaledToWidth(100, QtCore.Qt.SmoothTransformation)  # scale the image to 100px width
+        self.imageLabel.setPixmap(pixmap)  # set the scaled image in the label
         self.titleLayout.addWidget(self.imageLabel)
 
         self.titleLabel = QtWidgets.QLabel("My Amazing Tale")  # create a QLabel widget for the title
